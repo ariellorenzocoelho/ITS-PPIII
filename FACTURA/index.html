@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Iconos de materializecss -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <title> Clase 43 - EJERCITACION APP COMPLETA </title>
+</head>
+    <body>
+        <!-- CREO NAVBAR CON TITULO CENTRADO E ICONOS A LOS COSTADOS DEL TITULO-->
+        <nav class="orange darken-1">
+            <div class="nav-wrapper">
+                <a href="#!" class="brand-logo center"><i class="material-icons">cloud_upload</i>Ejercitacion APP Completa<i class="material-icons right">cloud_download</i></a>
+            </div>
+        </nav>
+
+        <!-- CREO UN EFECTO PARALLAX CON IMAGEN DE LAS BARDAS MARGEN SUR ALTO VALLE  Y LO REPLICO AL FINAL PARA PODER APRECIAR LA IMAGEN COMPLETA AL SCROLEAR-->
+        <div class="parallax-container">
+            <div class="parallax"><img src="../img/Bardas_margen_sur-Cipolletti.jpg"></div>
+        </div>
+            
+        <!-- CREO LA ROW CONTENEDORA DE TODA SALVO EL NAVBAR CON COLOR DE FONDE VERDE CLARO -->
+        <div class="row green lighten-4">
+
+            <!-- ENLAZO CON EL ELEMENTO PPAL DEL INDEX.JS -->
+            <div id="ppal">
+                <!-- CREO UNA COLUMNA DE 4 PARA HACER EL INGRESO/EDICION/BUSQUEDA DE FACTURAS -->
+                <div class="col s4">
+
+                    <!-- CREO UN CARD PANEL DE COLOR GRIS QUE CONTENDRA TODO EL INGRESO/EDICION/BUSQUEDA DE FACTURAS -->
+                    <div class="card-panel grey darken-1">
+                        
+                        <!-- CREO OTRO PANEL DE COLOR GRIS PARA GENERAR UN "SOMBREADO" PARA EL TITULO -->
+                        <div class="card-panel grey darken-1">
+                            <h5 class="center white-text">AGREGUE UNA NUEVA FACTURA</h5>
+                        </div>
+                        
+                        <!-- CREO OTRO PANEL DE COLOR GRIS PARA GENERAR UN "SOMBREADO" PARA ZONA DE INGRESO DE DATOS Y BOTONES ACTUALIZAR Y GUARDAR-->
+                        <div class="card-panel grey darken-1 ">
+                            
+                            <!-- FILA PARA LOS INPUTS DE TAMANO 6 PARA NOMBRES -->
+                            <div class="row">
+                                <div class="input-field col s6">
+                                    <input v-model="nombre_producto" type="text" placeholder="Ingrese Nombre del Producto">
+                                    <label>Nombre Producto</label>
+                                </div>
+                                <div class="input-field col s6">
+                                    <input v-model="nombre_cliente" type="text" placeholder="Ingrese Nombre del Cliente">
+                                    <label>Nombre Cliente</label>
+                                </div>
+                            </div>
+
+                            
+                            <!-- FILA PARA LOS INPUTS DE TAMANO 2, 2, 2, 2 Y 4 PARA IVA, CANTIDAD, SUBTOTAL, TOTAL Y FORMA DE PAGO RESPECTIVAMENTE -->
+                            <div class="row">
+                                <div class="input-field col s2">
+                                    <input v-model="Iva" type="text" placeholder="Ingrese IVA">
+                                    <label>Iva</label>
+                                </div>
+                                <div class="input-field col s2">
+                                    <input v-model="cantidad" type="number" placeholder="Ingrese cantidad">
+                                    <label>Cantidad</label>
+                                </div>
+                                <div class="input-field col s2">
+                                    <input v-model="subtotal" type="text" placeholder="Ingrese subtotal">
+                                    <label>Subtotal</label>
+                                </div>
+
+                                <div class="input-field col s2">
+                                    <!-- DESHABILITO EL TOTAL PARA QUE SEA CALCULADO A TRAVES DE UN COMPUTED -->
+                                    <input v-model="total" type="text" placeholder="Total" disabled>
+                                    <label>Total</label>
+                                </div>
+
+                                <!-- CREO INPUT CON DESPLEGABLE PARA LISTAR OPCIONES DE PAGO -->
+                                <div class="input-field col s4 white-text">
+
+                                    <select name="forma_pago" id="forma_pago" v-model="forma_pago">
+                                        <!-- V-MODEL RECOMIENDA DESABILITAR PRIMER OPCION CON VALOR VACIO PARA ENLAZAR CON EL CONTENIDO(VACIO) DEL DATA DE FORMA_PAGO Y ASI MOSTRAR(DESHABILITADA) ESTA OPCION -->
+                                        <option disabled value="">Seleccione</option>
+                                        <option value="Efectivo">Efectivo</option>
+                                        <option value="Debito">Debito</option>
+                                        <option value="Credito">Credito</option>
+                                        <option value="Cheque">Cheque</option>                                        
+                                        <option value="Paga D10s">Paga D10s</option>                                   
+                                    </select>
+                                </div>
+
+                            </div>
+
+                            <!-- CREO UNA FILA PARA COLOCAR DOS BOTONES, GUARDAR Y ACTUALIZAR -->
+                            <div class="row">
+                                <div class="button-field col s6">
+                                    <button v-if="botonGuardar == true" v-on:click="guardarFactura()" class="waves-effect waves-green btn-large" ><i class="material-icons left">cloud_upload</i>Guardar</button>
+                                    <!-- SI ESTOY EN INSTANCIA DE ACTUALIZAR UNA FACTURA PREVIAMENTE SELECCIONADA, DESHABILITO BOTON GUARDAR -->
+                                    <button v-if="botonGuardar == false" class="btn-large teal accent-5" disabled ><i class="material-icons left">cloud_upload</i>Guardar</button>        
+                                </div>
+                                <div class="button-field col s6">
+                                    <button v-if="botonActualizar == true" v-on:click="actualizarFactura()" class="waves-effect waves-yellow btn-large"><i class="material-icons left">autorenew</i>Actualizar</button>
+                                    <!-- SI ESTOY EN INSTANCIA DE GUARDAR UNA FACTURA NUEVA, DESHABILITO BOTON ACTUALIZAR -->
+                                    <button v-if="botonActualizar == false" v-on:click="actualizarFactura()" class="btn-large" disabled><i class="material-icons left">autorenew</i>Actualizar</button>
+                                </div>
+                            </div>   
+                        </div>
+ 
+                        <!-- CREO UN CARD PANEL DENTRO DEL CARD PANEL PPAL DE ESTA COLUMNA DE 4, PARA SEPARAR LA PARTE DE BUSQUEDA -->
+                        <div class="card-panel grey darken-1">
+
+                            <div class="row">
+
+                                <!-- CREO UN CARD PANEL PARA DARLE VOLUMEN/SOMBRA AL TITULO -->
+                                <div class="card-panel grey darken-1">
+                                    <h6 class="center white-text">Busqueda de facturas</h6>
+                                </div>
+
+                                <div class="row">
+                                    <!-- CREO DOS COLUMNAS DE 6 - 1 PARA BUSCAR POR NRO FACTURA -->
+                                    <div class="col s6">
+                                        <!-- CREO CARD PANEL PARA LA SECCION DE BUSQUEDA POR NRO FACTURA -->
+                                        <div class="card-panel grey darken-1">
+                                            
+                                            <h6 class="center white-text">Por Factura</h6>
+
+                                            <!-- CREO DOS FILAS DEL ANCHO MAXIMO, UNA PARA EL INPUT DE BUSQUEDA -->
+                                            <div class="row">
+                                                <div class="input-field col s12">
+                                                    <!-- Tomo el evento de presionar la tecla enter como opcion de busqueda de factura -->
+                                                    <input v-model="factura_a_buscar" type="text" placeholder="Nro Factura" v-on:keyup.enter="buscarFactura()"> 
+                                                    <label>Nro Factura</label>
+                                                </div>
+                                            </div>
+                                            <!-- Y OTRA PARA QUE EL BOTON DE BUSQUEDA SE MUESTRE ABAJO-->
+                                            <div class="row">
+                                                <div class="button-field col s12 ">
+                                                    <!-- Tomo el evento del click al boton buscar como opcion de busqueda de factura -->
+                                                    <button v-on:click="buscarFactura()" class="waves-effect waves-purple purple btn" style="width: 100%;"><i class="material-icons left">search</i>BUSCAR</button>
+                                                </div>
+                                            </div>
+                                                                                            
+                                        </div>
+                                        
+                                    </div>
+
+                                    <!-- Y LA OTRA COLUMNA PARA BUSCAR POR CLIENTE  -->
+                                    <div class="col s6">
+                                        
+                                        <div class="card-panel grey darken-1">
+                                            
+                                            <!-- CREO CARD PANEL PARA LA SECCION DE BUSQUEDA POR NRO CLIENTE -->
+                                            <h6 class="center white-text">Por Cliente</h6>
+                                            
+                                            <!-- CREO DOS FILAS DEL ANCHO MAXIMO, UNA PARA EL INPUT DE BUSQUEDA -->
+                                            <div class="row">
+                                                <div class="input-field col s12">
+                                                    <!-- Tomo el evento de presionar la tecla enter como opcion de busqueda de factura por cliente -->
+                                                    <input v-model="cliente_a_buscar" type="text" placeholder="Nombre Cliente" v-on:keyup.enter="buscarFacturaCliente()"> 
+                                                    <label>Nombre cliente</label>
+                                                </div>
+                                            </div>
+                                            <!-- Y OTRA PARA QUE EL BOTON DE BUSQUEDA SE MUESTRE ABAJO-->
+                                            <div class="row">
+                                                <div class="button-field col s12 ">
+                                                    <!-- Tomo el evento del click al boton buscar como opcion de busqueda de factura -->
+                                                    <button v-on:click="buscarFacturaCliente()" class="waves-effect waves-purple orange darken-4 btn" style="width: 100%;"><i class="material-icons left">search</i>BUSCAR</button>
+                                                </div>
+                                            </div>  
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>  
+
+                    </div>
+                </div>
+                
+                <div class="col s8">
+
+                    <!-- CREO CARD PANEL PARA LA SECCION DE LISTADO DE FACTURAS -->
+                    <div class="card-panel grey darken-1">
+
+                        <!-- CREO CARD PANEL PARA EL TITULO, PARA DAR EFECTO DE SOMBRA/VOLUMEN -->
+                        <div class="card-panel grey darken-1">
+                            <h4 class="center">LISTA DE FACTURAS EMITIDAS</h4>
+                        </div>
+                        
+                        <!-- CREO CARD PANEL PARA LA TABLA DE LISTADO DE FACTURAS -->
+                        <div class="card-panel grey darken-1">
+
+                            <!-- HEAD DE LA TABLA RESPONSIVA A LISTAR -->
+                            <table class="responsive-table">
+                                <tr>
+                                    <th class="center">FACT</th>
+                                    <th class="center">PRODUCTO</th>
+                                    <th class="center">CLIENTE</th>
+                                    <th class="center">IVA</th>
+                                    <th class="center">CANT</th>
+                                    <th class="center">STOTAL</th>
+                                    <th class="center">TOTAL</th>
+                                    <th class="center">F.PAGO</th>
+                                </tr>
+                                <!-- LISTO EL CONTENIDO DE LA BBDD -->
+                                <tr v-for="factura of lista_facturas">
+                                    <td class="center">{{ factura.id_factura }}</td>
+                                    <td class="center">{{ factura.nombre_producto}}</td>
+                                    <td class="center">{{ factura.nombre_cliente }}</td>
+                                    <td class="center">{{ factura.Iva }}</td>
+                                    <td class="center">{{ factura.cantidad }}</td>
+                                    <td class="center">{{ factura.subtotal }}</td>
+                                    <td class="center">{{ factura.total }}</td>
+                                    <td class="center">{{ factura.forma_pago }}</td>
+                                    <td >                       
+                                        <!-- MSJ DE AYUDA CUANDO PASO EL MOUSE POR EL BOTON DE ELIMINAR -->
+                                        <!-- LLAMO A LA FUNCION ELIMINAR CUANDO SE DA CLICK EN ELIMINAR -->                  
+                                        <a class="btn-floating btn-small waves-effect waves-light red " onmouseover="helpElimina()" v-on:click="eliminarFactura(factura.id_factura)"><i class="material-icons">delete_forever</i></a>
+                                        <!-- MSJ DE AYUDA CUANDO PASO EL MOUSE POR EL BOTON DE EDITAR Y ESTE ESTA ACTIVO-->
+                                        <!-- LLAMO A LA FUNCION EDITARFACTURA CUANDO SE DA CLICK EN EDITAR -->                  
+                                        <a class="btn-floating btn-small waves-effect waves-light blue" v-if="botonEditar == true" onmouseover="helpEdita()" v-on:click="editarFactura(factura.id_factura, factura.nombre_producto, factura.nombre_cliente, factura.Iva, factura.cantidad, factura.subtotal, factura.total, factura.forma_pago)"><i class="material-icons">mode_edit</i></a>
+                                        <a class="btn-floating btn-small waves-effect waves-light blue disabled" v-if="botonEditar == false"><i class="material-icons">mode_edit</i></a>
+                                        <!-- MSJ DE AYUDA CUANDO PASO EL MOUSE POR EL BOTON DE CANCELAR Y ESTE ESTA ACTIVO-->
+                                        <!-- LLAMO A LA FUNCION CANCELAREDITAR CUANDO SE DA CLICK EN CANCELAR -->   
+                                        <a class="btn-floating btn-small waves-effect waves-light green" v-if="botonCancelar == true" onmouseover="helpCancela() "v-on:click="cancelarEditar()"><i class="material-icons">settings_backup_restore</i></a>
+                                        <a class="btn-floating btn-small waves-effect waves-light green disabled" v-if="botonCancelar == false" ><i class="material-icons">settings_backup_restore</i></a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- CREO UN EFECTO PARALLAX CON IMAGEN DE LAS BARDAS MARGEN SUR ALTO VALLE  -->
+        <div class="parallax-container">
+            <div class="parallax"><img src="../img/Bardas_margen_sur-Cipolletti.jpg"></div>
+        </div>
+
+        <!-- MATERIALIZECSS Compiled and minified JavaScript -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+        <!-- VUEJS development version, includes helpful console warnings -->
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <!-- AXIOS Using jsDelivr CDN: -->
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <!-- APP PPAL -->
+        <script src="index.js"></script>
+        <!-- EVENTOS DE INICIALIZACION JAVASCRIPT -->
+        <script src="indexEventos.js"></script>
+
+    </body>
+</html>
